@@ -15,7 +15,9 @@ export async function getUsers(req: Request, res: Response) {
 
 export async function getUser(req: Request, res: Response) {
   try {
-    const { form } = req.body;
+    const { email, password } = req.params;
+
+    console.log('inputs??: ', email, password)
   } catch (error) {
     console.log(error);
   }
