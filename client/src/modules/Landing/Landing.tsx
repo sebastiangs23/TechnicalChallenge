@@ -5,7 +5,7 @@ import SignUp from "./components/SignUp";
 const Landing: React.FC = () => {
     return (
         <div>
-            <h2>Landing</h2>
+            <h2>LANDINNNNGGG</h2>
             <SignIn />
             <SignUp />
         </div>
