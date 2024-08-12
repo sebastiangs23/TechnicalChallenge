@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import 'dotenv/config.js';
 
-const uri = process.env.URI_MONGO || "";
+const uri = process.env.URI_MONGO || 'mongodb://0.0.0.0:27017/dev';
 
 mongoose
   .connect(uri)
