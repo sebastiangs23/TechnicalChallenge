@@ -13,13 +13,11 @@ export async function getUsers(req: Request, res: Response) {
   }
 }
 
-export async function getUser(req: Request, res: Response){
-  try{
+export async function getUser(req: Request, res: Response) {
+  try {
     const { form } = req.body;
-
-    
-  }catch(error){
-    console.log(error)
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -27,31 +25,59 @@ export async function createUser(req: Request, res: Response) {
   try {
     const { form } = req.body;
 
-    console.log(form)
+    const existingEmail = await User.findOne({ email: form.email }).select(
+      "email"
+    );
 
-    const idUserType = await TypeUser.findOne({ name: "user"}).select("_id");
+    console.log('existingEmail: ', existingEmail);
 
-    const passwordCrypted = CryptoJS.AES.encrypt(form.password, 'password').toString();
+    if (!existingEmail) {
+      const idUserType = await TypeUser.findOne({ name: "user" }).select("_id");
 
-    //const desencrypted = CryptoJS.AES.decrypt(passwordCrypted, 'password');
-    //let original = desencrypted.toString(CryptoJS.enc.Utf8);
+      const passwordCrypted = CryptoJS.AES.encrypt(
+        form.password,
+        "password"
+      ).toString();
 
-    //console.log('la clave desemcriptada: ', original)
+      //const desencrypted = CryptoJS.AES.decrypt(passwordCrypted, 'password');
+      //let original = desencrypted.toString(CryptoJS.enc.Utf8);
 
-    const user = await User.create({
-      name: form.name,
-      last_name: form.last_name,
-      email: form.email,
-      age: form.age,
-      password: passwordCrypted,
-      id_type_user: idUserType ? idUserType._id : null
+      //console.log('la clave desemcriptada: ', original)
 
-    });
-    console.log("User created:", user);
+      const user = await User.create({
+        name: form.name,
+        last_name: form.last_name,
+        email: form.email,
+        age: form.age,
+        password: passwordCrypted,
+        id_type_user: idUserType ? idUserType._id : null,
+      });
+      console.log("User created:", user);
 
-    res.json({ message: "El usuario fue creado de manera exitosa!!" });
+      if (user) {
+        res.json({
+          status: "successfull",
+          message: "El usuario fue creado exitosamente!",
+        });
+      } else {
+        res.json({
+          status: "error",
+          message: "Ocurrio un error al intentar crear el usuario.",
+        });
+      }
+    } else {
+      res.json({
+        status: "error",
+        message: "El correo ya se encuentra en uso",
+      });
+    }
   } catch (error) {
-    console.log(error);
+    console.log('Error en el controlador createUser: ', error);
+
+    res.json({
+      status: "warning",
+      message: "El correo ya se encuentro en uso",
+    });
   }
 }
 
@@ -60,7 +86,6 @@ export async function getTypeUsers(req: Request, res: Response) {
     // const typeUsers = await TypeUser.create({
     //   name: "user",
     // });
-
     // console.log("Se creo de manera exitosa!");
     // res.json(typeUsers);
   } catch (error) {
