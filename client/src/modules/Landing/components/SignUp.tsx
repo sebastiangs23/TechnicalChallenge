@@ -13,29 +13,105 @@ const SignUp: React.FC = () => {
     last_name: "",
     email: "",
     age: 0,
-    password: "null",
+    password: "",
   });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    last_name: "",
+    email: "",
+    age: "",
+    password: "",
+  });
+
+  /*__________________
+  |   VALIDATIONS   */
+  const validateForm = () => {
+    let valid = true;
+    let errors = {
+      name: "",
+      last_name: "",
+      email: "",
+      age: "",
+      password: "",
+    };
+
+    if (form.name.length < 2 || form.name.length > 50) {
+      errors.name = "Name must be between 2 and 50 characters";
+      valid = false;
+    }
+
+    if (form.last_name.length < 2 || form.last_name.length > 50) {
+      errors.last_name = "Last name must be between 2 and 50 characters";
+      valid = false;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(form.email)) {
+      errors.email = "Invalid email format";
+      valid = false;
+    }
+
+    if (form.age < 1 || form.age > 100) {
+      errors.age = "Age must be between 1 and 100";
+      valid = false;
+    }
+
+    if (form.password.length < 8) {
+      errors.password = "Password must be at least 8 characters long";
+      valid = false;
+    } else if (!/[A-Z]/.test(form.password)) {
+      errors.password = "Password must contain at least one uppercase letter";
+      valid = false;
+    } else if (!/[a-z]/.test(form.password)) {
+      errors.password = "Password must contain at least one lowercase letter";
+      valid = false;
+    } else if (!/[0-9]/.test(form.password)) {
+      errors.password = "Password must contain at least one number";
+      valid = false;
+    }
+
+    setErrors(errors);
+    return valid;
+  };
 
   /*____________________________
   |   REQUEST TO THE SERVER   */
   async function sendForm(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     try {
-        console.log('sending the forrm...')
-      e.preventDefault();
-      const response = await axios.post(`${api}/users`, {form: form});
+      console.log("sending the form...");
+      const response = await axios.post(`${api}/users`, { form: form });
 
-      console.log(response.data);
+      if (response.data.status === "successfull") {
+        const notify = () =>
+          toast.success(response.data.message, {
+            position: "top-center",
+            autoClose: 3500,
+            hideProgressBar: false,
+            pauseOnHover: true,
+            draggable: true,
+          });
 
-      const notify = () =>
-        toast.warning("message", {
-          position: "top-center",
-          autoClose: 3500,
-          hideProgressBar: false,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        notify();
+        clearForm();
+      } else if (response.data.status === "error") {
+        const notify = () =>
+          toast.error(response.data.message, {
+            position: "top-center",
+            autoClose: 3500,
+            hideProgressBar: false,
+            pauseOnHover: true,
+            draggable: true,
+          });
 
-      notify();
+        notify();
+      }
     } catch (error) {
       console.log(error);
     }
@@ -45,13 +121,21 @@ const SignUp: React.FC = () => {
   |   FUNCTIONS   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-
-    console.log("looks this --> ", id, value);
     setForm((prevForm) => ({
       ...prevForm,
       [id]: value,
     }));
   };
+
+  function clearForm() {
+    setForm({
+      name: "",
+      last_name: "",
+      email: "",
+      age: 0,
+      password: "",
+    });
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -76,6 +160,9 @@ const SignUp: React.FC = () => {
               value={form.name}
               onChange={handleChange}
             />
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            )}
           </div>
 
           <div>
@@ -93,6 +180,9 @@ const SignUp: React.FC = () => {
               value={form.last_name}
               onChange={handleChange}
             />
+            {errors.last_name && (
+              <p className="text-red-500 text-xs mt-1">{errors.last_name}</p>
+            )}
           </div>
 
           <div>
@@ -110,11 +200,14 @@ const SignUp: React.FC = () => {
               value={form.email}
               onChange={handleChange}
             />
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            )}
           </div>
 
           <div>
             <label
-              htmlFor="email"
+              htmlFor="age"
               className="block text-sm font-medium text-gray-700"
             >
               Age
@@ -123,10 +216,13 @@ const SignUp: React.FC = () => {
               type="number"
               id="age"
               className="block w-full px-4 py-2 mt-1 text-gray-700 bg-gray-200 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-300"
-              placeholder="Age"
+              placeholder="Enter your age"
               value={form.age}
               onChange={handleChange}
             />
+            {errors.age && (
+              <p className="text-red-500 text-xs mt-1">{errors.age}</p>
+            )}
           </div>
 
           <div>
@@ -144,6 +240,9 @@ const SignUp: React.FC = () => {
               value={form.password}
               onChange={handleChange}
             />
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            )}
           </div>
 
           <div>
@@ -157,7 +256,7 @@ const SignUp: React.FC = () => {
         </form>
       </div>
 
-      {/* <Notification /> */}
+      <ToastContainer />
     </div>
   );
 };
