@@ -1,5 +1,6 @@
 {
     "conventionalCommits.scopes": [
-        "Client"
+        "Client",
+        "Api"
     ]
 }
