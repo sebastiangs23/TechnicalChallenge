@@ -6,7 +6,7 @@ export async function getUsers(req: Request, res: Response) {
   try {
     const users = await User.find({});
 
-    console.log("los usuarios: ", users);
+    console.log("los usuarios --> ", users);
 
     res.json(users);
   } catch (error) {
