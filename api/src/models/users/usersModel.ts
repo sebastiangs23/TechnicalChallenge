@@ -1,8 +1,9 @@
 import mongoose, { Document, Schema, Model, model } from "mongoose";
 import IUser from "../../interfaces/IUser.js";
+import TypeUser from "./typeUsers.js";
 
 class UserClass {
-    getFullName(this: IUser): string {
+    getData(this: IUser): string {
         return `${this.name} ${this.last_name}`;
     }
 }
@@ -12,7 +13,8 @@ const UserSchema = new Schema<IUser>( {
     last_name: { type: String, required: true },
     email: { type: String, required: true },
     age: { type: Number, required: true },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    id_type_user: { type: Schema.Types.ObjectId, ref: 'TypeUser' , require: true }
 });
 
 UserSchema.loadClass(UserClass);
