@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
 import User from "../../models/users/usersModel.js";
 import TypeUser from "../../models/users/typeUsers.js";
+import CryptoJS from "crypto-js";
 
 export async function getUsers(req: Request, res: Response) {
   try {
-    const users = await User.find({});
-
-    console.log("los usuarios --> ", users);
+    const users = await User.find();
 
     res.json(users);
   } catch (error) {
@@ -14,26 +13,43 @@ export async function getUsers(req: Request, res: Response) {
   }
 }
 
+export async function getUser(req: Request, res: Response){
+  try{
+    const { form } = req.body;
+
+    
+  }catch(error){
+    console.log(error)
+  }
+}
+
 export async function createUser(req: Request, res: Response) {
   try {
-    const {} = req.body;
+    const { form } = req.body;
+
+    console.log(form)
 
     const idUserType = await TypeUser.findOne({ name: "user"}).select("_id");
 
-    console.log('idUserType: ', idUserType);
+    const passwordCrypted = CryptoJS.AES.encrypt(form.password, 'password').toString();
+
+    //const desencrypted = CryptoJS.AES.decrypt(passwordCrypted, 'password');
+    //let original = desencrypted.toString(CryptoJS.enc.Utf8);
+
+    //console.log('la clave desemcriptada: ', original)
 
     const user = await User.create({
-      name: "user_test",
-      last_name: "just test",
-      email: "test@gmail.com",
-      age: 23,
-      password: "test",
+      name: form.name,
+      last_name: form.last_name,
+      email: form.email,
+      age: form.age,
+      password: passwordCrypted,
       id_type_user: idUserType ? idUserType._id : null
 
     });
     console.log("User created:", user);
 
-    res.json({ message: "All gucci :3" });
+    res.json({ message: "El usuario fue creado de manera exitosa!!" });
   } catch (error) {
     console.log(error);
   }
