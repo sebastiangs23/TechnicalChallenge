@@ -17,9 +17,39 @@ export async function getUser(req: Request, res: Response) {
   try {
     const { email, password } = req.params;
 
-    console.log('inputs??: ', email, password)
+    const user = await User.findOne({
+      email
+    });
+
+    if(user){
+
+      const descryptedPw = CryptoJS.AES.decrypt(user.password ,'password');
+      const pw = descryptedPw.toString(CryptoJS.enc.Utf8);
+
+      if(password === pw){
+        res.json({
+          status: 'success',
+          message: 'Bienvenido a Skillfull!'
+        })
+      }else {
+        res.json({
+          status: 'error',
+          message: 'Contraseña incorrecta.'
+        })
+      }
+    }else {
+      res.json({
+        status: 'error',
+        message: 'No existe un usuario con ese correo.'
+      })
+    }
+
   } catch (error) {
     console.log(error);
+    res.json({
+      status: 'error',
+      message: 'Error al intentar logearse!'
+    })
   }
 }
 
