@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import "../../../style/index.css";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import loginAudio from "../../../assets/sounds/approve_sound.mp3";
+import errorAudio from "../../../assets/sounds/fail_sound.mp3";
 const api = import.meta.env.VITE_API_LOCAL;
 
 const SignIn: React.FC = () => {
@@ -18,8 +20,6 @@ const SignIn: React.FC = () => {
       const response = await axios.get(
         `${api}/users/${inputs.email}/${inputs.password}`
       );
-      console.log(inputs);
-      console.log(response.data);
 
       if (response.data.status === "success") {
         const notify = () =>
@@ -32,6 +32,7 @@ const SignIn: React.FC = () => {
           });
 
         notify();
+        playSound(response.data.status);
 
       } else if (response.data.status === "error") {
         const notify = () =>
@@ -44,10 +45,21 @@ const SignIn: React.FC = () => {
           });
 
         notify();
+        playSound(response.data.status);
       }
 
     } catch (error) {
       console.log(error);
+      const notify = () =>
+        toast.error('error', {
+          position: "top-center",
+          autoClose: 3500,
+          hideProgressBar: false,
+          pauseOnHover: true,
+          draggable: true,
+        });
+
+      notify();
     }
   }
 
@@ -60,9 +72,28 @@ const SignIn: React.FC = () => {
     }));
   };
 
+  /*______________
+  |  FUNCTIONS  */
+  function playSound(type: string){
+    
+    switch (type){
+        case 'success': {
+            const audio = new Audio(loginAudio);
+            audio.play();
+            break;
+        }
+        case 'error': {
+            const audio = new Audio(errorAudio);
+            audio.play();
+            break;
+        }
+    }
+  }
+
   return (
     <div className="flex items-center justify-center  bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
+      <ToastContainer />
         <h2 className="text-2xl font-bold text-center text-gray-800">
           Sign In
         </h2>

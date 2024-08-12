@@ -20,7 +20,6 @@ const Landing: React.FC = () => {
           Crea un profesor de Inteligencia artificial y entrenalo
         </h4>
 
-        {/* Botón para alternar entre SignIn y SignUp */}
         <div className="flex justify-center space-x-4">
           <button
             className={`px-4 py-2 rounded ${isSignIn ? "bg-teal-500 text-white" : "bg-gray-600 text-gray-200"} hover:bg-teal-600`}
@@ -36,7 +35,6 @@ const Landing: React.FC = () => {
           </button>
         </div>
 
-        {/* Mostrar el formulario basado en la selección */}
         {isSignIn ? <SignIn /> : <SignUp />}
       </div>
     </div>
