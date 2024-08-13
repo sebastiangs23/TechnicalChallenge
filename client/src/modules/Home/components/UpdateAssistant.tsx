@@ -65,7 +65,6 @@ const EditAssistantModal: React.FC<EditAssistantModalProps> = ({
           notify();
         }
 
-        //toast
         onClose();
       }
     } catch (error) {
