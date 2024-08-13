@@ -125,6 +125,53 @@ export async function askAssistant(req: Request, res: Response) {
       console.log(error);
       res.status(500).json({ message: "Error interno del servidor" });
     }
-  }
-  
-  
+}
+
+export async function updateAssistant(req: Request, res: Response){
+    try{
+        const { data } = req.body;
+
+        console.log('data --> ', data);
+
+        const assistant = await Assistant.updateOne({
+            _id: new mongoose.Types.ObjectId(data._id),
+        }, {
+            name: data.name
+        });
+
+        res.json({
+            status: 'success',
+            message: 'Se actualizó de manera correcta el asistente',
+        });
+        
+    }catch(error){
+        console.log(error);
+        res.json({
+            status: 'error',
+            message: 'Hubo un error al intentar actualizar al asistente.'
+        })
+    }
+};
+
+export async function deleteAssistant(req: Request, res:Response){
+    try{
+        const { _id  } = req.params;
+
+        await Assistant.deleteOne({
+            _id
+        });
+
+        res.json({
+            status: 'success',
+            message: 'Se eliminó de manera correcta el asistente.'
+        });
+
+        
+    }catch(error){
+        console.log(error);
+        res.json({
+            status: 'error',
+            message: 'Hubo un error al intentar eliminar el asistente'
+        })
+    }
+}
