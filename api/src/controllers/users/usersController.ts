@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import User from "../../models/users/usersModel.js";
 import TypeUser from "../../models/users/typeUsers.js";
 import CryptoJS from "crypto-js";
+import jws from 'jsonwebtoken';
+import 'dotenv';
 
 export async function getUsers(req: Request, res: Response) {
   try {
@@ -27,7 +29,13 @@ export async function getUser(req: Request, res: Response) {
       const pw = descryptedPw.toString(CryptoJS.enc.Utf8);
 
       if(password === pw){
+        const token = jws.sign({id: user._id}, process.env.JWT_SECRET || "" ,{
+          expiresIn : process.env.JWT_EXPIRES_IN,
+        });
+
+
         res.json({
+          token,
           status: 'success',
           message: 'Bienvenido a Skillfull!'
         })
