@@ -4,10 +4,13 @@ import MultiStepForm from "./components/MultiStep";
 import axios from "axios";
 const api = import.meta.env.VITE_API_LOCAL;
 
+import IAssistants from "../../interfaces/IAssistances";
+
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [assistances, setAssistances] = useState<IAssistants[]>([]);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -18,20 +21,24 @@ const Home: React.FC = () => {
     if (!token) {
       console.log("No encoentro el token");
       navigate("/");
-    };
+    }
 
+    getAssistants();
   }, []);
 
   /*_________________________
     |  REQUEST TO THE SERVER  */
-  async function getAssistants(){
-    try{
-        const response = await axios.get(`${api}/`)
-    }catch(error){
-        console.log(error)
+  async function getAssistants() {
+    try {
+      const id_user = localStorage.getItem("id_user");
+      const response = await axios.get(`${api}/assistances/${id_user}`);
+
+      setAssistances(response.data.assistances);
+
+    } catch (error) {
+      console.log(error);
     }
   }
-
 
   /*______________
     |  FUNCTIONS  */
@@ -41,18 +48,18 @@ const Home: React.FC = () => {
       {/* Aqui tengo que tener los asistentes del usuario */}
       <div className="w-1/4 bg-gray-800 p-4 space-y-4">
         <h2 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 tracking-wider uppercase">
-          Conversations
+          IAsistentes
         </h2>
+
         <ul className="space-y-2">
-          <li className="p-2 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer">
-            Conversation 1
-          </li>
-          <li className="p-2 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer">
-            Conversation 2
-          </li>
-          <li className="p-2 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer">
-            Conversation 3
-          </li>
+          {assistances &&
+            assistances.map((item) => {
+              return (
+                <li className="p-2 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer">
+                  {item.name}
+                </li>
+              );
+            })}
         </ul>
       </div>
 
@@ -61,9 +68,7 @@ const Home: React.FC = () => {
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 tracking-wider uppercase">
           Crea tu propio asistente!
         </h1>
-        <p className="mt-4 text-lg">
-          Haz click aquí.
-        </p>
+        <p className="mt-4 text-lg">Haz click aquí.</p>
         <button
           onClick={openModal}
           className="mt-6 px-6 py-2 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-lg shadow-lg"

@@ -1,15 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+const api = import.meta.env.VITE_API_LOCAL;
 
 interface MultiStepFormProps {
   closeModal: () => void;
 }
 
 const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal }) => {
+  const [idUser, setIdUser] = useState<string | null>(null);
+
+  useEffect(() => {
+    const id_user = localStorage.getItem("id_user");
+    setIdUser(id_user);
+    
+  }, []);
+
+  useEffect(() => {
+    setAssistant((prevAssistant) => ({
+      ...prevAssistant,
+      id_user: idUser,
+    }));
+  }, [idUser]);
 
   const [step, setStep] = useState(1);
   const [assistant, setAssistant] = useState({
     name: "",
-    id_user: "",
+    id_user: idUser,
     speciality: "",
     help: "",
   });
@@ -19,14 +35,19 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal }) => {
 
   /*__________________________
   |  REQUEST TO THE SERVER  */
-  async function createAssistant(e: React.FormEvent<HTMLFormElement>){
-    try{
-        e.preventDefault();
-        console.log('aca se crea el asistente xd')
+  async function createAssistant(e: React.FormEvent<HTMLFormElement>) {
+    try {
+      e.preventDefault();
 
-        console.log(assistant)
-    }catch(error){
-        console.log(error);
+      const response = await axios.post(`${api}/assistances`, {
+        data: assistant,
+      });
+
+      console.log(response.data);
+      closeModal();
+      
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -44,7 +65,9 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal }) => {
     <form onSubmit={createAssistant}>
       {step === 1 && (
         <div>
-          <h3 className="text-xl font-semibold">Paso 1: ¿Como quieres que se llame tu asistente?</h3>
+          <h3 className="text-xl font-semibold">
+            Paso 1: ¿Como quieres que se llame tu asistente?
+          </h3>
           <input
             type="text"
             id="name"
@@ -63,7 +86,9 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal }) => {
       )}
       {step === 2 && (
         <div>
-          <h3 className="text-xl font-semibold">Paso 2: ¿En que quieres que sea especialista?</h3>
+          <h3 className="text-xl font-semibold">
+            Paso 2: ¿En que quieres que sea especialista?
+          </h3>
           <input
             type="text"
             id="speciality"
@@ -90,7 +115,9 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal }) => {
       )}
       {step === 3 && (
         <div>
-          <h3 className="text-xl font-semibold">Paso 3: ¿En que quieres que te ayude?</h3>
+          <h3 className="text-xl font-semibold">
+            Paso 3: ¿En que quieres que te ayude?
+          </h3>
           <input
             type="text"
             id="help"
