@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import IAssistant from "../../../interfaces/IAssistances";
+import axios from "axios";
+
+const api = import.meta.env.VITE_API_LOCAL;
 
 interface EditAssistantModalProps {
   assistant: IAssistant | null;
@@ -7,21 +10,40 @@ interface EditAssistantModalProps {
   onSave: (updatedAssistant: IAssistant) => void;
 }
 
-const EditAssistantModal: React.FC<EditAssistantModalProps> = ({ assistant, onClose, onSave }) => {
+const EditAssistantModal: React.FC<EditAssistantModalProps> = ({
+  assistant,
+  onClose,
+  onSave,
+}) => {
   const [name, setName] = React.useState<string>("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (assistant) {
       setName(assistant.name);
     }
   }, [assistant]);
 
-  const handleSave = () => {
-    if (assistant) {
-      onSave({ ...assistant, name });
-      onClose();
+  async function handleSave() {
+    try {
+      if (assistant) {
+        onSave({ ...assistant, name });
+
+        let data = {
+            _id: assistant._id,
+            name
+        };
+
+        const response = await axios.put(`${api}/assistants/update`, {data});
+
+        console.log(response.data);
+
+        //toast 
+        onClose();
+      }
+    } catch (error) {
+      console.log(error);
     }
-  };
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">

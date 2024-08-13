@@ -50,10 +50,10 @@ const Home: React.FC = () => {
       window.confirm("¿Estás seguro de que deseas eliminar este asistente?")
     ) {
       try {
-        await axios.delete(`${api}/assistants/${assistantId}`);
-        setassistants((prev) =>
-          prev.filter((item) => item._id !== assistantId)
-        );
+        const response = await axios.delete(`${api}/assistants/delete/${assistantId}`);
+
+        
+
       } catch (error) {
         console.log("Error al eliminar el asistente:", error);
       }

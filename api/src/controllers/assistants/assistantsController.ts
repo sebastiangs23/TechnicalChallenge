@@ -131,8 +131,12 @@ export async function updateAssistant(req: Request, res: Response){
     try{
         const { data } = req.body;
 
-        const assistant = Assistant.updateOne({
+        console.log('data --> ', data);
 
+        const assistant = await Assistant.updateOne({
+            _id: new mongoose.Types.ObjectId(data._id),
+        }, {
+            name: data.name
         });
 
         res.json({
@@ -160,7 +164,9 @@ export async function deleteAssistant(req: Request, res:Response){
         res.json({
             status: 'success',
             message: 'Se eliminó de manera correcta el asistente.'
-        })
+        });
+
+        
     }catch(error){
         console.log(error);
         res.json({
