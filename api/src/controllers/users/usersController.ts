@@ -37,7 +37,8 @@ export async function getUser(req: Request, res: Response) {
         res.json({
           token,
           status: 'success',
-          message: 'Bienvenido a IAssistant!'
+          message: 'Bienvenido a IAssistant!',
+          id_user: user._id
         })
       }else {
         res.json({

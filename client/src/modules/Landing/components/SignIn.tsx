@@ -36,8 +36,10 @@ const SignIn: React.FC = () => {
         
         navigate("/home")
         localStorage.setItem("auth_token", response.data.token);
+        localStorage.setItem("id_user", response.data.id_user);
         notify();
         playSound(response.data.status);
+
       } else if (response.data.status === "error") {
         const notify = () =>
           toast.error(response.data.message, {
