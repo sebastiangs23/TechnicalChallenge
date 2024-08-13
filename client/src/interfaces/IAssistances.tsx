@@ -3,6 +3,7 @@ interface IAssistant {
     name: string;
     id_user: string;
     speciality: string;
+    conversation: any;
 };
 
 export default IAssistant;

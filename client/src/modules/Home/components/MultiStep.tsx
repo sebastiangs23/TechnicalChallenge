@@ -4,15 +4,15 @@ const api = import.meta.env.VITE_API_LOCAL;
 
 interface MultiStepFormProps {
   closeModal: () => void;
+  refresh: () => void;
 }
 
-const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal }) => {
+const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal, refresh }) => {
   const [idUser, setIdUser] = useState<string | null>(null);
 
   useEffect(() => {
     const id_user = localStorage.getItem("id_user");
     setIdUser(id_user);
-    
   }, []);
 
   useEffect(() => {
@@ -39,13 +39,13 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal }) => {
     try {
       e.preventDefault();
 
-      const response = await axios.post(`${api}/assistances`, {
+      const response = await axios.post(`${api}/assistants`, {
         data: assistant,
       });
 
       console.log(response.data);
       closeModal();
-      
+      refresh();
     } catch (error) {
       console.log(error);
     }
@@ -63,11 +63,20 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal }) => {
 
   return (
     <form onSubmit={createAssistant}>
+      <div className="flex justify-end mt-6">
+        <button
+          onClick={closeModal}
+          className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg shadow-lg"
+        >
+          Cerrar
+        </button>
+      </div>
       {step === 1 && (
         <div>
           <h3 className="text-xl font-semibold">
             Paso 1: ¿Como quieres que se llame tu asistente?
           </h3>
+
           <input
             type="text"
             id="name"
