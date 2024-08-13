@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MultiStepForm from "./components/MultiStep";
+import EditAssistantModal from "./components/UpdateAssistant";
+import ConversationModal from "./components/ConversationModal";
 import axios from "axios";
 const api = import.meta.env.VITE_API_LOCAL;
 
@@ -10,6 +12,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [assistants, setassistants] = useState<IAssistants[]>([]);
   const [selectedAssistant, setSelectedAssistant] =
     useState<IAssistants | null>(null);
@@ -22,6 +25,39 @@ const Home: React.FC = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedAssistant(null);
+  };
+
+  const openEditModal = (assistant: IAssistants) => {
+    setSelectedAssistant(assistant);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedAssistant(null);
+  };
+
+  const handleSaveEdit = (updatedAssistant: IAssistants) => {
+    setassistants((prev) =>
+      prev.map((item) =>
+        item._id === updatedAssistant._id ? updatedAssistant : item
+      )
+    );
+  };
+
+  const handleDelete = async (assistantId: string) => {
+    if (
+      window.confirm("¿Estás seguro de que deseas eliminar este asistente?")
+    ) {
+      try {
+        await axios.delete(`${api}/assistants/${assistantId}`);
+        setassistants((prev) =>
+          prev.filter((item) => item._id !== assistantId)
+        );
+      } catch (error) {
+        console.log("Error al eliminar el asistente:", error);
+      }
+    }
   };
 
   useEffect(() => {
@@ -50,30 +86,28 @@ const Home: React.FC = () => {
 
   async function askAssistant() {
     try {
-      const currentQuestion = question.trim(); // Eliminar espacios en blanco innecesarios
+      const currentQuestion = question.trim();
       setQuestion("");
 
       if (!currentQuestion) {
         console.log("La pregunta está vacía. No se enviará la solicitud.");
-        return; // No hacer nada si la pregunta está vacía
+        return;
       }
 
       if (!selectedAssistant || !selectedAssistant._id) {
         console.log(
           "No hay un asistente seleccionado. No se enviará la solicitud."
         );
-        return; // No hacer nada si no hay un asistente seleccionado
+        return;
       }
 
       let data;
       if (!conversation || conversation.length === 0) {
-        // Primera vez, enviar el mensaje inicial
         data = {
           _id: selectedAssistant._id,
           initial: currentQuestion,
         };
       } else {
-        // Conversación continua
         data = {
           _id: selectedAssistant._id,
           initial: currentQuestion,
@@ -81,33 +115,26 @@ const Home: React.FC = () => {
         };
       }
 
-      console.log("Datos a enviar:", data); // Verificar los datos que se están enviando
-
       const response = await axios.post(`${api}/assistants/chat`, data);
 
-      console.log("Respuesta del servidor:", response.data); // Verificar la respuesta del servidor
-
       setConversation((prev) => [
-        ...(prev || []), // Asegura que prev es siempre un array
+        ...(prev || []), //Parchar el bug
         { role: "user", content: currentQuestion },
         { role: "system", content: response.data.system },
       ]);
     } catch (error) {
       console.log("Error en la solicitud:", error);
-      // Aquí puedes agregar una notificación o alerta para manejar el error
     }
   }
 
   const handleAssistantClick = async (assistant: IAssistants) => {
     try {
-      console.log(assistant);
       setSelectedAssistant(assistant);
       setIsModalOpen(true);
 
       setConversation(assistant.conversation);
     } catch (error) {
       console.log("Error al obtener la conversación:", error);
-      // Manejar el error, mostrar una notificación o mensaje al usuario
     }
   };
 
@@ -117,6 +144,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-900 text-white">
+      
       {/* ASISTENTES SIDEBAR */}
       <div className="w-1/4 bg-gray-800 p-4 space-y-4">
         <h2 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 tracking-wider uppercase">
@@ -129,10 +157,25 @@ const Home: React.FC = () => {
               return (
                 <li
                   key={item._id}
-                  className="p-2 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer"
-                  onClick={() => handleAssistantClick(item)}
+                  className="p-2 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer flex justify-between items-center"
                 >
-                  {item.name}
+                  <span onClick={() => handleAssistantClick(item)}>
+                    {item.name}
+                  </span>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => openEditModal(item)}
+                      className="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item._id)}
+                      className="px-2 py-1 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg"
+                    >
+                      Borrar
+                    </button>
+                  </div>
                 </li>
               );
             })}
@@ -155,51 +198,24 @@ const Home: React.FC = () => {
 
       {/* MODAL CONVERSACIÓN */}
       {isModalOpen && selectedAssistant && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-gray-800 w-2/3 p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 tracking-wider uppercase">
-              Conversación con {selectedAssistant.name}
-            </h2>
-            {/* Section to display the conversation */}
-            <div className="bg-gray-700 p-4 mt-4 h-64 overflow-y-auto rounded-lg">
-              {conversation &&
-                conversation.map((msg: any, index) => (
-                  <div
-                    key={index}
-                    className={`p-2 mb-2 rounded-lg max-w-xs ${
-                      msg.role === "user"
-                        ? "bg-teal-500 ml-auto text-right"
-                        : "bg-gray-600 mr-auto text-left"
-                    }`}
-                  >
-                    {msg.content}
-                  </div>
-                ))}
-            </div>
+        <ConversationModal
+          isOpen={isModalOpen}
+          assistantName={selectedAssistant.name}
+          conversation={conversation}
+          question={question}
+          onClose={closeModal}
+          onChange={handleChange}
+          onSubmit={askAssistant}
+        />
+      )}
 
-            <input
-              onChange={handleChange}
-              type="text"
-              value={question}
-              placeholder="Preguntame algo.."
-              className="w-full p-2 mt-4 bg-gray-700 text-white rounded-lg"
-            />
-            <div className="flex justify-end mt-6">
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg shadow-lg"
-              >
-                Cerrar
-              </button>
-              <button
-                onClick={askAssistant}
-                className="px-6 py-2 ml-5 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-lg"
-              >
-                Enviar
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* MODAL EDICIÓN */}
+      {isEditModalOpen && selectedAssistant && (
+        <EditAssistantModal
+          assistant={selectedAssistant}
+          onClose={closeEditModal}
+          onSave={handleSaveEdit}
+        />
       )}
 
       {/* MODAL MULTISTEPPER */}
@@ -214,6 +230,7 @@ const Home: React.FC = () => {
         </div>
       )}
     </div>
+
   );
 };
 
