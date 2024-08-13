@@ -77,7 +77,7 @@ const Home: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-gray-800 w-2/3 p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 tracking-wider uppercase">
-              Multistep Form
+              IAssistant
             </h2>
             <MultiStepForm closeModal={closeModal} />
           </div>

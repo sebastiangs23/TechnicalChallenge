@@ -37,7 +37,7 @@ export async function getUser(req: Request, res: Response) {
         res.json({
           token,
           status: 'success',
-          message: 'Bienvenido a Skillfull!'
+          message: 'Bienvenido a IAssistant!'
         })
       }else {
         res.json({

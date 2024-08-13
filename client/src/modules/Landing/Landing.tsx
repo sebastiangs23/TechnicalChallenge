@@ -10,7 +10,7 @@ const Landing: React.FC = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
       <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-lg shadow-lg">
         <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 tracking-wider uppercase">
-          SkillFull
+          IAssistant
         </h2>
         <h4 className="text-xl font-semibold text-teal-400 tracking-wide border-b-2 border-teal-400 pb-2">
           Bienvenido
