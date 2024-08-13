@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import IAssistant from "../../../interfaces/IAssistances";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const api = import.meta.env.VITE_API_LOCAL;
 
@@ -16,6 +18,7 @@ const EditAssistantModal: React.FC<EditAssistantModalProps> = ({
   onSave,
 }) => {
   const [name, setName] = React.useState<string>("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (assistant) {
@@ -29,15 +32,40 @@ const EditAssistantModal: React.FC<EditAssistantModalProps> = ({
         onSave({ ...assistant, name });
 
         let data = {
-            _id: assistant._id,
-            name
+          _id: assistant._id,
+          name,
         };
 
-        const response = await axios.put(`${api}/assistants/update`, {data});
+        const response = await axios.put(`${api}/assistants/update`, { data });
 
         console.log(response.data);
 
-        //toast 
+        if (response.data.status === "success") {
+          const notify = () =>
+            toast.success(response.data.message, {
+              position: "top-center",
+              autoClose: 3500,
+              hideProgressBar: false,
+              pauseOnHover: true,
+              draggable: true,
+            });
+
+          navigate("/home")
+          notify();
+        } else if (response.data.status === "error") {
+          const notify = () =>
+            toast.error(response.data.message, {
+              position: "top-center",
+              autoClose: 3500,
+              hideProgressBar: false,
+              pauseOnHover: true,
+              draggable: true,
+            });
+
+          notify();
+        }
+
+        //toast
         onClose();
       }
     } catch (error) {
@@ -47,6 +75,7 @@ const EditAssistantModal: React.FC<EditAssistantModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+       <ToastContainer />
       <div className="bg-gray-800 w-1/3 p-6 rounded-lg shadow-lg">
         <h2 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 tracking-wider uppercase">
           Editar Asistente

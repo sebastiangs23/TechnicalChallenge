@@ -4,6 +4,7 @@ import MultiStepForm from "./components/MultiStep";
 import EditAssistantModal from "./components/UpdateAssistant";
 import ConversationModal from "./components/ConversationModal";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 const api = import.meta.env.VITE_API_LOCAL;
 
 import IAssistants from "../../interfaces/IAssistances";
@@ -52,8 +53,33 @@ const Home: React.FC = () => {
       try {
         const response = await axios.delete(`${api}/assistants/delete/${assistantId}`);
 
-        
+        if (response.data.status === "success") {
+          const notify = () =>
+            toast.success(response.data.message, {
+              position: "top-center",
+              autoClose: 3500,
+              hideProgressBar: false,
+              pauseOnHover: true,
+              draggable: true,
+            });
+          
+          navigate("/home")
+          notify();
+  
+        } else if (response.data.status === "error") {
+          const notify = () =>
+            toast.error(response.data.message, {
+              position: "top-center",
+              autoClose: 3500,
+              hideProgressBar: false,
+              pauseOnHover: true,
+              draggable: true,
+            });
+  
+          notify();
+          }
 
+          getAssistants();
       } catch (error) {
         console.log("Error al eliminar el asistente:", error);
       }
@@ -144,7 +170,8 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-900 text-white">
-      
+      <ToastContainer />
+
       {/* ASISTENTES SIDEBAR */}
       <div className="w-1/4 bg-gray-800 p-4 space-y-4">
         <h2 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 tracking-wider uppercase">
