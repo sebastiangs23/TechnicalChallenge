@@ -10,6 +10,6 @@ router.use('/users', userRoutes);
 
 /*_____________
 |  CHAT-GPT  */
-router.use('/assistances', assisntanceRoutes);
+router.use('/assistants', assisntanceRoutes);
 
 export default router;
