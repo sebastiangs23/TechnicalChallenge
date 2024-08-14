@@ -90,10 +90,16 @@ export async function createUser(req: Request, res: Response) {
       });
       console.log("User created:", user);
 
+      const token = jws.sign({id: user._id}, process.env.JWT_SECRET || "" ,{
+        expiresIn : process.env.JWT_EXPIRES_IN,
+      });
+
       if (user) {
         res.json({
           status: "successfull",
           message: "El usuario fue creado exitosamente!",
+          user,
+          token
         });
       } else {
         res.json({
