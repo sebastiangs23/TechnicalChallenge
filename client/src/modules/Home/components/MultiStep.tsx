@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Confetti from "react-confetti";
+
 const api = import.meta.env.VITE_API_LOCAL;
 
 interface MultiStepFormProps {
@@ -9,6 +11,7 @@ interface MultiStepFormProps {
 
 const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal, refresh }) => {
   const [idUser, setIdUser] = useState<string | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     const id_user = localStorage.getItem("id_user");
@@ -44,8 +47,14 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal, refresh }) =>
       });
 
       console.log(response.data);
-      closeModal();
-      refresh();
+      setShowConfetti(true);
+
+      //Manejar de una mejor manera luego este asyncronismo
+      setTimeout(() => {
+        setShowConfetti(false);
+        closeModal();
+        refresh();
+      }, 2500); 
     } catch (error) {
       console.log(error);
     }
@@ -63,6 +72,8 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal, refresh }) =>
 
   return (
     <form onSubmit={createAssistant}>
+      {showConfetti && <Confetti width={1000} height={600} />}
+
       <div className="flex justify-end mt-6">
         <button
           onClick={closeModal}
@@ -154,7 +165,7 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal, refresh }) =>
       {step === 4 && (
         <div>
           <h3 className="text-xl font-semibold">Paso 4</h3>
-          <p className="mt-4">Revisa la información y enviala.</p>
+          <p className="mt-4">Revisa la información y envíala.</p>
           <div className="flex justify-between mt-6">
             <button
               onClick={prevStep}
