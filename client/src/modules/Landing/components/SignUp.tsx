@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 const api = import.meta.env.VITE_API_LOCAL;
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "../../../style/index.css";
 
 import Notification from "../../../global/Notification";
@@ -8,6 +9,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const SignUp: React.FC = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     last_name: "",
@@ -85,7 +87,7 @@ const SignUp: React.FC = () => {
     }
 
     try {
-      console.log("sending the form...");
+
       const response = await axios.post(`${api}/users`, { form: form });
 
       if (response.data.status === "successfull") {
@@ -97,6 +99,11 @@ const SignUp: React.FC = () => {
             pauseOnHover: true,
             draggable: true,
           });
+        
+          navigate("/home")
+          localStorage.setItem("auth_token", response.data.token);
+          localStorage.setItem("id_user", response.data.user._id);
+          notify();
 
         notify();
         clearForm();
