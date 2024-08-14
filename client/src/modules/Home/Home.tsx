@@ -51,7 +51,9 @@ const Home: React.FC = () => {
       window.confirm("¿Estás seguro de que deseas eliminar este asistente?")
     ) {
       try {
-        const response = await axios.delete(`${api}/assistants/delete/${assistantId}`);
+        const response = await axios.delete(
+          `${api}/assistants/delete/${assistantId}`
+        );
 
         if (response.data.status === "success") {
           const notify = () =>
@@ -62,10 +64,9 @@ const Home: React.FC = () => {
               pauseOnHover: true,
               draggable: true,
             });
-          
-          navigate("/home")
+
+          navigate("/home");
           notify();
-  
         } else if (response.data.status === "error") {
           const notify = () =>
             toast.error(response.data.message, {
@@ -75,13 +76,23 @@ const Home: React.FC = () => {
               pauseOnHover: true,
               draggable: true,
             });
-  
-          notify();
-          }
 
-          getAssistants();
+          notify();
+        }
+
+        getAssistants();
       } catch (error) {
         console.log("Error al eliminar el asistente:", error);
+        const notify = () =>
+          toast.success('Error al borrar el asistente.', {
+            position: "top-center",
+            autoClose: 3500,
+            hideProgressBar: false,
+            pauseOnHover: true,
+            draggable: true,
+          });
+
+        notify();
       }
     }
   };
@@ -257,7 +268,6 @@ const Home: React.FC = () => {
         </div>
       )}
     </div>
-
   );
 };
 
