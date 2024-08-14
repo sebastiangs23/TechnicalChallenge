@@ -69,20 +69,21 @@ export async function askAssistant(req: Request, res: Response) {
   
         console.log(assistant);
   
-        // Construir el mensaje inicial
         messages = [
           {
             role: "user",
             content: `Hola, necesito tu ayuda como especialista en ${assistant?.speciality}. Mi primera pregunta es: ${initial}`,
           },
         ];
+
+      // Continuar con la conversación existente
       } else if (conversationHistory && conversationHistory.length > 0) {
-        // Continuar con la conversación existente
+
         messages = [
           ...conversationHistory,
           {
             role: "user",
-            content: initial, // Este debería ser el nuevo mensaje del usuario
+            content: initial, 
           },
         ];
       } else {
@@ -90,7 +91,6 @@ export async function askAssistant(req: Request, res: Response) {
         return;
       }
   
-      // Enviamos los mensajes a la API de OpenAI para obtener la respuesta
       const stream = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: messages,
@@ -99,7 +99,6 @@ export async function askAssistant(req: Request, res: Response) {
   
       let chat_gpt_answer = "";
   
-      // Recolectamos la respuesta del modelo GPT
       for await (const chunk of stream) {
         const context = chunk.choices[0]?.delta?.content || "";
         if (context) {
@@ -107,7 +106,6 @@ export async function askAssistant(req: Request, res: Response) {
         }
       }
   
-      // Agregamos la respuesta de ChatGPT a la conversación
       messages.push({
         role: "system",
         content: chat_gpt_answer,
@@ -116,7 +114,7 @@ export async function askAssistant(req: Request, res: Response) {
       // Guardamos la conversación actualizada en la base de datos
       await Assistant.findOneAndUpdate(
         { _id: new mongoose.Types.ObjectId(_id) },
-        { $push: { conversation: { $each: messages } } }  // Añadimos los nuevos mensajes al historial de conversación existente
+        { $push: { conversation: { $each: messages } } }
       );
   
       console.log({ system: chat_gpt_answer });
@@ -166,7 +164,7 @@ export async function deleteAssistant(req: Request, res:Response){
             message: 'Se eliminó de manera correcta el asistente.'
         });
 
-        
+
     }catch(error){
         console.log(error);
         res.json({

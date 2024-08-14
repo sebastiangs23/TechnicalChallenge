@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Confetti from "react-confetti";
+import { toast, ToastContainer } from "react-toastify";
 
 const api = import.meta.env.VITE_API_LOCAL;
 
@@ -57,6 +58,16 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal, refresh }) =>
       }, 2500); 
     } catch (error) {
       console.log(error);
+      const notify = () =>
+        toast.success('Error al crear al asistente.', {
+          position: "top-center",
+          autoClose: 3500,
+          hideProgressBar: false,
+          pauseOnHover: true,
+          draggable: true,
+        });
+
+      notify();
     }
   }
 
@@ -72,6 +83,7 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal, refresh }) =>
 
   return (
     <form onSubmit={createAssistant}>
+      <ToastContainer />
       {showConfetti && <Confetti width={1000} height={600} />}
 
       <div className="flex justify-end mt-6">

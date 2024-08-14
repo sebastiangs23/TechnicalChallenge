@@ -80,11 +80,6 @@ export async function createUser(req: Request, res: Response) {
         "password"
       ).toString();
 
-      //const desencrypted = CryptoJS.AES.decrypt(passwordCrypted, 'password');
-      //let original = desencrypted.toString(CryptoJS.enc.Utf8);
-
-      //console.log('la clave desemcriptada: ', original)
-
       const user = await User.create({
         name: form.name,
         last_name: form.last_name,
