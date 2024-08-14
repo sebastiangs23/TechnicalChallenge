@@ -2,6 +2,9 @@
 
 Este proyecto es una aplicación web que permite a los usuarios crear y personalizar asistentes de inteligencia artificial (IA) haciendo uso de la API ChatGPT (gpt-4o-mini), para ayudarte a realizar cualquier tarea.
 
+## Documentación Swagger
+http://localhost:5100/api/documentation/
+
 ## Funcionalidades
 
 1) Login y registro de usuarios
