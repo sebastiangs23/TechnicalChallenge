@@ -10,7 +10,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const swaggerDocument = YAML.load(path.join(__dirname, "../../assistant_doc_swagger.yaml"));
+const swaggerDocument = YAML.load(path.join(__dirname, "../../iassistant_doc_swagger.yaml"));
 
 const router = Router();
 
