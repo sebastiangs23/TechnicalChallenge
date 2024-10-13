@@ -17,7 +17,7 @@ const Landing: React.FC = () => {
         </h4>
 
         <h4 className="text-xl font-semibold text-teal-400 pb-2">
-          Crea tu asistente con inteligencia artificial y entrenalo!
+          Habla con nuestro ChatBot de Dazlab
         </h4>
 
         <div className="flex justify-center space-x-4">

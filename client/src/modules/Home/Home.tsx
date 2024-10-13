@@ -13,8 +13,20 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [assistants, setassistants] = useState<IAssistants[]>([]);
+  const [assistants, setassistants] = useState([
+    {
+      _id: 1,
+      name: "Chat IA",
+      conversation: [],
+      idUser: localStorage.getItem("id_user"),
+    },
+    {
+      _id: 2,
+      name: "Chat Default Answers",
+      conversation: [],
+      idUser: localStorage.getItem("id_user"),
+    }
+  ]);
   const [selectedAssistant, setSelectedAssistant] =
     useState<IAssistants | null>(null);
   const [question, setQuestion] = useState<string>("");
@@ -26,24 +38,6 @@ const Home: React.FC = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedAssistant(null);
-  };
-
-  const openEditModal = (assistant: IAssistants) => {
-    setSelectedAssistant(assistant);
-    setIsEditModalOpen(true);
-  };
-
-  const closeEditModal = () => {
-    setIsEditModalOpen(false);
-    setSelectedAssistant(null);
-  };
-
-  const handleSaveEdit = (updatedAssistant: IAssistants) => {
-    setassistants((prev) =>
-      prev.map((item) =>
-        item._id === updatedAssistant._id ? updatedAssistant : item
-      )
-    );
   };
 
   const handleDelete = async (assistantId: string) => {
@@ -105,21 +99,10 @@ const Home: React.FC = () => {
       navigate("/");
     }
 
-    getAssistants();
   }, []);
 
   /*_________________________
     |  REQUEST TO THE SERVER  */
-  async function getAssistants() {
-    try {
-      const id_user = localStorage.getItem("id_user");
-      const response = await axios.get(`${api}/assistants/${id_user}`);
-
-      setassistants(response.data.assistants);
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   async function askAssistant() {
     try {
@@ -143,21 +126,32 @@ const Home: React.FC = () => {
         data = {
           _id: selectedAssistant._id,
           initial: currentQuestion,
+          conversationHistory: conversation,
         };
       } else {
         data = {
           _id: selectedAssistant._id,
           initial: currentQuestion,
           conversationHistory: conversation,
+          idUser: localStorage.getItem("id_user")
         };
-      }
+      }      
 
-      const response = await axios.post(`${api}/assistants/chat`, data);
+      const response = await axios.post(
+        `http://localhost:2337/server/functions/chatIa`,
+        {objectData: data},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Parse-Application-Id": "000",
+          },
+        }
+      );
 
       setConversation((prev) => [
         ...(prev || []), //Parchar el bug
         { role: "user", content: currentQuestion },
-        { role: "system", content: response.data.system },
+        { role: "system", content: response.data.result.data.system },
       ]);
     } catch (error) {
       console.log("Error en la solicitud:", error);
@@ -202,12 +196,6 @@ const Home: React.FC = () => {
                   </span>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => openEditModal(item)}
-                      className="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg"
-                    >
-                      Editar
-                    </button>
-                    <button
                       onClick={() => handleDelete(item._id)}
                       className="px-2 py-1 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg"
                     >
@@ -223,11 +211,11 @@ const Home: React.FC = () => {
       {/* PRINCIPAL */}
       <div className="flex-1 p-8">
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500 tracking-wider uppercase">
-          Crea y personaliza tu propi@ asistente!
+          Soluciona tus dudas con el bot de Dazlab
         </h1>
         <p className="mt-4 text-lg">Haz click aquí.</p>
         <button
-          onClick={openModal}
+          // onClick={openModal}
           className="mt-6 px-6 py-2 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-lg shadow-lg"
         >
           Crear Asistente
@@ -244,15 +232,6 @@ const Home: React.FC = () => {
           onClose={closeModal}
           onChange={handleChange}
           onSubmit={askAssistant}
-        />
-      )}
-
-      {/* MODAL EDICIÓN */}
-      {isEditModalOpen && selectedAssistant && (
-        <EditAssistantModal
-          assistant={selectedAssistant}
-          onClose={closeEditModal}
-          onSave={handleSaveEdit}
         />
       )}
 

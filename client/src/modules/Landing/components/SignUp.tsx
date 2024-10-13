@@ -11,18 +11,16 @@ import "react-toastify/dist/ReactToastify.css";
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    name: "",
+    username: "",
     last_name: "",
     email: "",
-    age: 0,
     password: "",
   });
 
   const [errors, setErrors] = useState({
-    name: "",
+    username: "",
     last_name: "",
     email: "",
-    age: "",
     password: "",
   });
 
@@ -31,15 +29,14 @@ const SignUp: React.FC = () => {
   const validateForm = () => {
     let valid = true;
     let errors = {
-      name: "",
+      username: "",
       last_name: "",
       email: "",
-      age: "",
       password: "",
     };
 
-    if (form.name.length < 2 || form.name.length > 50) {
-      errors.name = "Name must be between 2 and 50 characters";
+    if (form.username.length < 2 || form.username.length > 50) {
+      errors.username = "Name must be between 2 and 50 characters";
       valid = false;
     }
 
@@ -51,11 +48,6 @@ const SignUp: React.FC = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(form.email)) {
       errors.email = "Invalid email format";
-      valid = false;
-    }
-
-    if (form.age < 1 || form.age > 100) {
-      errors.age = "Age must be between 1 and 100";
       valid = false;
     }
 
@@ -87,29 +79,38 @@ const SignUp: React.FC = () => {
     }
 
     try {
-
-      const response = await axios.post(`${api}/users`, { form: form });
-
-      if (response.data.status === "successfull") {
+      const response = await axios.post(
+        `http://localhost:2337/server/functions/createUser`,
+        { objectData: form },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Parse-Application-Id": "000",
+            "X-Parse-REST-API-Key": "Yzhl06W5O7Vhf8iwlYBQCxs6hY8Fs2PQewNGjsl0",
+          },
+        }
+      );
+      console.log('response: ', response.data);
+      
+      if (response.data.result.status === "success") {
         const notify = () =>
-          toast.success(response.data.message, {
+          toast.success('success', {
             position: "top-center",
             autoClose: 3500,
             hideProgressBar: false,
             pauseOnHover: true,
             draggable: true,
           });
-        
-          navigate("/home")
-          localStorage.setItem("auth_token", response.data.token);
-          localStorage.setItem("id_user", response.data.user._id);
-          notify();
 
+        navigate("/home");
+        localStorage.setItem("auth_token", response.data.token);
+        localStorage.setItem("id_user", response.data.user._id);
         notify();
+
         clearForm();
-      } else if (response.data.status === "error") {
+      } else {
         const notify = () =>
-          toast.error(response.data.message, {
+          toast.error('Error', {
             position: "top-center",
             autoClose: 3500,
             hideProgressBar: false,
@@ -136,10 +137,9 @@ const SignUp: React.FC = () => {
 
   function clearForm() {
     setForm({
-      name: "",
+      username: "",
       last_name: "",
       email: "",
-      age: 0,
       password: "",
     });
   }
@@ -157,18 +157,18 @@ const SignUp: React.FC = () => {
               htmlFor="name"
               className="block text-sm font-medium text-gray-700"
             >
-              Names
+              Username
             </label>
             <input
               type="text"
-              id="name"
+              id="username"
               className="block w-full px-4 py-2 mt-1 text-gray-700 bg-gray-200 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-300"
-              placeholder="Enter your name"
-              value={form.name}
+              placeholder="Enter your username"
+              value={form.username}
               onChange={handleChange}
             />
-            {errors.name && (
-              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            {errors.username && (
+              <p className="text-red-500 text-xs mt-1">{errors.username}</p>
             )}
           </div>
 
@@ -209,26 +209,6 @@ const SignUp: React.FC = () => {
             />
             {errors.email && (
               <p className="text-red-500 text-xs mt-1">{errors.email}</p>
-            )}
-          </div>
-
-          <div>
-            <label
-              htmlFor="age"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Age
-            </label>
-            <input
-              type="number"
-              id="age"
-              className="block w-full px-4 py-2 mt-1 text-gray-700 bg-gray-200 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-300"
-              placeholder="Enter your age"
-              value={form.age}
-              onChange={handleChange}
-            />
-            {errors.age && (
-              <p className="text-red-500 text-xs mt-1">{errors.age}</p>
             )}
           </div>
 

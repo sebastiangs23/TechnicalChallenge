@@ -20,29 +20,28 @@ const SignIn: React.FC = () => {
   async function loginUser(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
-      const response = await axios.get(
-        `${api}/users/${inputs.email}/${inputs.password}`
+      // let objectData = inputs;
+
+      const response = await axios.post(
+        `http://localhost:2337/server/login`,
+        {
+          email: inputs.email,
+          password: inputs.password
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Parse-Application-Id": "000",
+          },
+        }
       );
 
-      if (response.data.status === "success") {
-        const notify = () =>
-          toast.success(response.data.message, {
-            position: "top-center",
-            autoClose: 3500,
-            hideProgressBar: false,
-            pauseOnHover: true,
-            draggable: true,
-          });
-        
-        navigate("/home")
-        localStorage.setItem("auth_token", response.data.token);
-        localStorage.setItem("id_user", response.data.id_user);
-        notify();
-        playSound(response.data.status);
+      console.log('response_-< ', response.data);
+      
 
-      } else if (response.data.status === "error") {
+      if (response.data.sessionToken) {
         const notify = () =>
-          toast.error(response.data.message, {
+          toast.success("success", {
             position: "top-center",
             autoClose: 3500,
             hideProgressBar: false,
@@ -50,8 +49,24 @@ const SignIn: React.FC = () => {
             draggable: true,
           });
 
+        navigate("/home");
+        notify()
+        localStorage.setItem("auth_token", response.data.sessionToken);
+        localStorage.setItem("id_user", response.data.objectId);
+
+        playSound("success");
+      } else {
+        const notify = () =>
+          toast.error("error", {
+            position: "top-center",
+            autoClose: 3500,
+            hideProgressBar: false,
+            pauseOnHover: true,
+            draggable: true,
+          });
+
         notify();
-        playSound(response.data.status);
+        playSound("error");
       }
     } catch (error) {
       console.log(error);
