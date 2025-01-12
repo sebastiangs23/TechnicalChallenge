@@ -1,15 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import MultiStepForm from "./components/MultiStep";
-import EditAssistantModal from "./components/UpdateAssistant";
 import ConversationModal from "./components/ConversationModal";
-import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import img from "../../assets/imgs/aimia.webp";
 import telegram from "../../assets/icons/TELGRAM.webp";
 import x from "../../assets/icons/x.webp";
 import MatrixBackground from "../Canva/MatrixBackgroud";
-const api = import.meta.env.VITE_API_LOCAL;
 
 import IAssistants from "../../interfaces/IAssistances";
 
@@ -27,29 +23,7 @@ const Home: React.FC = () => {
     setIsModalOpen(false);
     setSelectedAssistant(null);
   };
-
-  const handleDelete = async (assistantId: string) => {
-    if (
-      window.confirm("¿Estás seguro de que deseas eliminar este asistente?")
-    ) {
-      try {
-        console.log("Se va borra el : ", assistantId);
-      } catch (error) {
-        console.log("Error al eliminar el asistente:", error);
-        const notify = () =>
-          toast.error("Error al borrar el asistente.", {
-            position: "top-center",
-            autoClose: 3500,
-            hideProgressBar: false,
-            pauseOnHover: true,
-            draggable: true,
-          });
-
-        notify();
-      }
-    }
-  };
-
+  
   const handleAssistantClick = async (assistant: IAssistants) => {
     try {
       console.log("assistans", assistant);
