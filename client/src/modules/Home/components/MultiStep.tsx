@@ -7,194 +7,238 @@ const api = import.meta.env.VITE_API_LOCAL;
 
 interface MultiStepFormProps {
   closeModal: () => void;
-  refresh: () => void;
+  addAssistant: () => void;
 }
 
-const MultiStepForm: React.FC<MultiStepFormProps> = ({ closeModal, refresh }) => {
-  const [idUser, setIdUser] = useState<string | null>(null);
+const MultiStepForm: React.FC<MultiStepFormProps> = ({
+  closeModal,
+  addAssistant,
+}) => {
   const [showConfetti, setShowConfetti] = useState(false);
-
-  useEffect(() => {
-    const id_user = localStorage.getItem("id_user");
-    setIdUser(id_user);
-  }, []);
-
-  useEffect(() => {
-    setAssistant((prevAssistant) => ({
-      ...prevAssistant,
-      id_user: idUser,
-    }));
-  }, [idUser]);
-
+  const [ip, setIp] = useState(null);
   const [step, setStep] = useState(1);
-  const [assistant, setAssistant] = useState({
-    name: "",
-    id_user: idUser,
-    speciality: "",
+  const [mia, setMia] = useState({
+    asset: "",
+    type_analysis: "",
     help: "",
+    ip: null,
   });
+  const [disabled, setDisabled] = useState<boolean>(false);
+
+  useEffect(() => {
+    getIpUser();
+  }, []);
 
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
 
-  /*__________________________
-  |  REQUEST TO THE SERVER  */
-  async function createAssistant(e: React.FormEvent<HTMLFormElement>) {
-    try {
-      e.preventDefault();
-
-      const response = await axios.post(`${api}/assistants`, {
-        data: assistant,
+  async function askMia(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+  
+    // Recuperar los tokens actuales
+    const currentTokens = parseInt(localStorage.getItem("tokens") || "0", 10);
+  
+    // Validación: Si los tokens son mayores a 15, mostrar mensaje y detener la ejecución
+    if (currentTokens > 15) {
+      toast.error("You have reached the maximum number of allowed queries (15).", {
+        position: "top-center",
+        autoClose: 3500,
+        hideProgressBar: false,
       });
-
-      console.log(response.data);
+      setDisabled(false); // Rehabilitar el botón si estaba deshabilitado
+      return;
+    }
+  
+    setDisabled(true); // Deshabilita el botón y muestra el loading
+  
+    try {
+      // Incrementar y almacenar los tokens
+      localStorage.setItem("tokens", (currentTokens + 1).toString());
+  
+      // Actualizar la IP en el estado "mia"
+      setMia((prev) => ({
+        ...prev,
+        ip: ip,
+      }));
+  
+      // Realizar la solicitud al endpoint
+      const response = await axios.post(`${api}/ai-mia/ask`, {
+        data: mia,
+      });
+  
+      console.log("responseeee--->", response.data);
+  
+      // Actualizar el estado "mia" con la respuesta del servidor
+      const updatedMia = {
+        ...mia,
+        message: response.data.system,
+      };
+  
+      setMia(updatedMia);
+      addAssistant(updatedMia);
+  
       setShowConfetti(true);
-
-      //Manejar de una mejor manera luego este asyncronismo
+  
       setTimeout(() => {
-        setShowConfetti(false);
         closeModal();
-        refresh();
-      }, 2500); 
+        setShowConfetti(false);
+        setDisabled(false);
+      }, 2500);
     } catch (error) {
-      console.log(error);
-      const notify = () =>
-        toast.success('Error al crear al asistente.', {
-          position: "top-center",
-          autoClose: 3500,
-          hideProgressBar: false,
-          pauseOnHover: true,
-          draggable: true,
-        });
+      console.error(error);
+      toast.error("Error al crear al asistente.", {
+        position: "top-center",
+        autoClose: 3500,
+        hideProgressBar: false,
+      });
+      setDisabled(false);
+    }
+  }
+  
 
-      notify();
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setMia((prev) => ({ ...prev, [id]: value }));
+  };
+
+  async function getIpUser() {
+    try {
+      const response = await axios.get("https://api.ipify.org/?format=json");
+      setIp(response.data?.ip);
+    } catch (error) {
+      console.error("Error fetching IP:", error);
     }
   }
 
-  /*______________
-  |  FUNCTIONS  */
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setAssistant((prevForm) => ({
-      ...prevForm,
-      [id]: value,
-    }));
-  };
+  function handleStepSelection(field: string, value: string) {
+    setMia((prev) => ({ ...prev, [field]: value }));
+    nextStep();
+  }
 
   return (
-    <form onSubmit={createAssistant}>
-      <ToastContainer />
-      {showConfetti && <Confetti width={1000} height={600} />}
-
-      <div className="flex justify-end mt-6">
-        <button
-          onClick={closeModal}
-          className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg shadow-lg"
+    <div className="relative">
+      {/* Overlay para el loading */}
+      {disabled && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
+          style={{ zIndex: 10000 }}
         >
-          Cerrar
-        </button>
-      </div>
-      {step === 1 && (
-        <div>
-          <h3 className="text-xl font-semibold">
-            Paso 1: ¿Como quieres que se llame tu asistente?
-          </h3>
+          <div className="flex flex-col items-center">
+            {/* Spinner de carga */}
+            <div className="loader border-t-4 border-cyan-400 border-solid rounded-full w-12 h-12 animate-spin"></div>
+            <p className="text-cyan-400 mt-4">Processing...</p>
+          </div>
+        </div>
+      )}
 
-          <input
-            type="text"
-            id="name"
-            placeholder="Ejemplo: Camilla"
-            className="w-full p-2 mt-4 bg-gray-700 text-white rounded-lg"
-            value={assistant.name}
-            onChange={handleChange}
-          />
+      <form onSubmit={askMia} className="p-6 bg-gray-800 rounded-lg text-white">
+        <ToastContainer />
+        {showConfetti && <Confetti width={1000} height={600} />}
+
+        <div className="flex justify-end mb-4">
           <button
-            onClick={nextStep}
-            className="mt-6 px-6 py-2 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-lg shadow-lg"
+            onClick={closeModal}
+            className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg text-white font-bold"
           >
-            Siguiente
+            Close
           </button>
         </div>
-      )}
-      {step === 2 && (
-        <div>
-          <h3 className="text-xl font-semibold">
-            Paso 2: ¿En que quieres que sea especialista?
-          </h3>
-          <input
-            type="text"
-            id="speciality"
-            placeholder="Ejemplo: 'Programación'"
-            className="w-full p-2 mt-4 bg-gray-700 text-white rounded-lg"
-            value={assistant.speciality}
-            onChange={handleChange}
-          />
-          <div className="flex justify-between mt-6">
-            <button
-              onClick={prevStep}
-              className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-lg"
-            >
-              Atras
-            </button>
+
+        {step === 1 && (
+          <div>
+            <h3 className="text-2xl font-semibold mb-4">
+              Step 1: What asset would you like to talk about?
+            </h3>
+            <input
+              type="text"
+              id="asset"
+              placeholder="Example: Bitcoin"
+              className="w-full p-3 bg-gray-700 rounded-lg text-white mb-6"
+              value={mia.asset}
+              onChange={handleChange}
+            />
             <button
               onClick={nextStep}
-              className="px-6 py-2 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-lg shadow-lg"
+              className="px-6 py-2 bg-teal-500 hover:bg-teal-600 rounded-lg font-bold"
             >
-              Siguiente
+              Next
+            </button>
+          </div>
+        )}
+
+{step === 2 && (
+        <div>
+          <h3 className="text-2xl font-semibold mb-4">
+            Step 2: What type of technical analysis would you like to apply?
+          </h3>
+          {["Fibonacci", "RSI", "Media Móvil", "MACD", "Bollinger Bands"].map((type) => (
+            <button
+              key={type}
+              onClick={() => handleStepSelection("type_analysis", type)}
+              className="w-full p-3 bg-gray-700 rounded-lg mb-4 hover:bg-gray-600 text-white font-bold"
+            >
+              {type}
+            </button>
+          ))}
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={prevStep}
+              className="px-6 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg font-bold"
+            >
+              Back
             </button>
           </div>
         </div>
       )}
+
       {step === 3 && (
         <div>
-          <h3 className="text-xl font-semibold">
-            Paso 3: ¿En que quieres que te ayude?
+          <h3 className="text-2xl font-semibold mb-4">
+            Step 3: What action would you like to take based on the analysis?
           </h3>
-          <input
-            type="text"
-            id="help"
-            placeholder="Ejemplo: Subir de seniority"
-            className="w-full p-2 mt-4 bg-gray-700 text-white rounded-lg"
-            value={assistant.help}
-            onChange={handleChange}
-          />
-          <div className="flex justify-between mt-6">
+          {["Accumulation Zone", "Possible Correction", "Place Buy or Sell Order"].map((action) => (
+            <button
+              key={action}
+              onClick={() => handleStepSelection("help", action)}
+              className="w-full p-3 bg-gray-700 rounded-lg mb-4 hover:bg-gray-600 text-white font-bold"
+            >
+              {action}
+            </button>
+          ))}
+          <div className="flex justify-between mt-4">
             <button
               onClick={prevStep}
-              className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-lg"
+              className="px-6 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg font-bold"
             >
-              Atras
-            </button>
-            <button
-              onClick={nextStep}
-              className="px-6 py-2 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-lg shadow-lg"
-            >
-              Siguiente
+              Back
             </button>
           </div>
         </div>
       )}
-      {step === 4 && (
-        <div>
-          <h3 className="text-xl font-semibold">Paso 4</h3>
-          <p className="mt-4">Revisa la información y envíala.</p>
-          <div className="flex justify-between mt-6">
-            <button
-              onClick={prevStep}
-              className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-lg"
-            >
-              Atras
-            </button>
+
+        {step === 4 && (
+          <div>
+            <h3 className="text-2xl font-semibold mb-4">
+              Step 4: Let AIMIA23 analyze
+            </h3>
             <button
               type="submit"
-              className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-lg"
+              disabled={disabled}
+              className={`relative flex items-center justify-center w-40 h-40 mx-auto mt-6 text-lg font-semibold border-2 rounded-full transition-transform duration-300 ${
+                disabled
+                  ? "text-gray-400 bg-gray-700 border-gray-500 cursor-not-allowed"
+                  : "text-cyan-400 bg-gray-900 border-cyan-400 hover:scale-110 hover:shadow-[0_0_10px_2px] hover:shadow-cyan-400"
+              }`}
             >
-              Crear asistente
+              <span className="text-center">
+                Start <br />
+                Analyze
+              </span>
             </button>
           </div>
-        </div>
-      )}
-    </form>
+        )}
+      </form>
+    </div>
   );
 };
 

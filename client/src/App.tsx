@@ -10,8 +10,8 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path='/home' element={<Home />} />
+        <Route path="/" element={<Home />} />
+        <Route path='/homesssssssssssssssssssssssss230000000' element={<Landing />} />
       </Routes>
     </Router>
   )
