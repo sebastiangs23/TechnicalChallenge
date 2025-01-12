@@ -6,6 +6,7 @@ import img from "../../assets/imgs/aimia.webp";
 import telegram from "../../assets/icons/TELGRAM.webp";
 import x from "../../assets/icons/X.webp";
 import MatrixBackground from "../Canva/MatrixBackgroud";
+import pumpfun from "../../assets/imgs/pumpfun.jpeg";
 
 import IAssistants from "../../interfaces/IAssistances";
 
@@ -14,7 +15,7 @@ const Home: React.FC = () => {
   const [assistants, setAssistants] = useState<any>([]);
   const [selectedAssistant, setSelectedAssistant] =
     useState<IAssistants | null>(null);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [conversation, setConversation] = useState<any>([]);
 
   const openModal = () => setIsModalOpen(true);
@@ -37,7 +38,7 @@ const Home: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addAssistant = (newAssistant: any) => {
     console.log("newAssistant: ", newAssistant);
-    setAssistants((prev:any) => [...prev, newAssistant]);
+    setAssistants((prev: any) => [...prev, newAssistant]);
   };
 
   return (
@@ -54,7 +55,7 @@ const Home: React.FC = () => {
 
         {/* Lista de asistentes */}
         <ul className="space-y-4">
-          {assistants.map((item:any , index:number) => (
+          {assistants.map((item: any, index: number) => (
             <li
               key={index}
               onClick={() => handleAssistantClick(item)}
@@ -91,8 +92,15 @@ const Home: React.FC = () => {
 
           {/* Subtítulo */}
           <h2 className="text-3xl font-extrabold tracking-wide uppercase mt-4 text-gray-300">
-            Contract:
+            Contract: 6o8sMNv22uftHKc1TgkXJxFiMZ2KaGjoQwGCKJzypump
           </h2>
+
+          <div className="flex justify-center items-center">
+            <img src={pumpfun} alt="pumpfun" className="w-20 m-4" />
+            <h2 className="text-3xl font-extrabold tracking-wide uppercase mt-4 text-gray-300">
+              Pumpfun: https://pump.fun/coin/6o8sMNv22uftHKc1TgkXJxFiMZ2KaGjoQwGCKJzypump
+            </h2>
+          </div>
 
           {/* Imagen */}
           <div className="flex justify-center my-6">
