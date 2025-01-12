@@ -63,7 +63,7 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
       }));
   
       // Realizar la solicitud al endpoint
-      const response = await axios.post(`${api}/ai-mia/ask`, {
+      const response = await axios.post(`https://sgsdeveloper.com/ai-mia/ask`, {
         data: mia,
       });
   
