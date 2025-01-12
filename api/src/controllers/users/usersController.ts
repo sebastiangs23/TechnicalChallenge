@@ -8,7 +8,7 @@ import 'dotenv';
 export async function getUsers(req: Request, res: Response) {
   try {
     const users = await User.find();
-
+    console.log('enters here')
     res.json(users);
   } catch (error) {
     console.log(error);

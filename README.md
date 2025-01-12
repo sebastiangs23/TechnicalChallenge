@@ -25,8 +25,6 @@ Asegúrate de tener instalados los siguientes programas:
 Clona el repositorio en tu máquina local:
 
 ```bash
-git clone https://github.com/sebastiangs23/TechnicalChallenge
-
 ## BACK
 cd api
 npm install
