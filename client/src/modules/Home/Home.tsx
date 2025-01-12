@@ -4,7 +4,7 @@ import ConversationModal from "./components/ConversationModal";
 import { ToastContainer } from "react-toastify";
 import img from "../../assets/imgs/aimia.webp";
 import telegram from "../../assets/icons/TELGRAM.webp";
-import x from "../../assets/icons/x.webp";
+import x from "../../assets/icons/X.webp";
 import MatrixBackground from "../Canva/MatrixBackgroud";
 
 import IAssistants from "../../interfaces/IAssistances";
