@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 interface ConversationModalProps {
   isOpen: boolean;
@@ -14,9 +14,6 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
   isOpen,
   assistantName,
   conversation,
-  question,
-  onClose,
-  onChange,
   // onSubmit,
 }) => {
   if (!isOpen) return null;
