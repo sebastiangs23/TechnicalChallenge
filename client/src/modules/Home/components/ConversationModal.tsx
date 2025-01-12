@@ -4,17 +4,14 @@ interface ConversationModalProps {
   isOpen: boolean;
   assistantName: string;
   conversation: string;
-  question: string;
   onClose: () => void;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  // onSubmit: () => void;
 }
 
 const ConversationModal: React.FC<ConversationModalProps> = ({
   isOpen,
   assistantName,
   conversation,
-  // onSubmit,
+  onClose
 }) => {
   if (!isOpen) return null;
 

@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Confetti from "react-confetti";
@@ -7,7 +8,7 @@ const api = import.meta.env.VITE_API_LOCAL;
 
 interface MultiStepFormProps {
   closeModal: () => void;
-  addAssistant: () => void;
+  addAssistant: any;
 }
 
 const MultiStepForm: React.FC<MultiStepFormProps> = ({

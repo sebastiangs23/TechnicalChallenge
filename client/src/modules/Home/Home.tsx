@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MultiStepForm from "./components/MultiStep";
 import ConversationModal from "./components/ConversationModal";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import img from "../../assets/imgs/aimia.webp";
 import telegram from "../../assets/icons/TELGRAM.webp";
 import x from "../../assets/icons/x.webp";
@@ -11,20 +11,19 @@ import IAssistants from "../../interfaces/IAssistances";
 
 const Home: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [assistants, setAssistants] = useState<IAssistants[]>([]);
+  const [assistants, setAssistants] = useState<any>([]);
   const [selectedAssistant, setSelectedAssistant] =
     useState<IAssistants | null>(null);
-  const [conversation, setConversation] = useState<
-    { role: "user" | "system"; content: string }[]
-  >([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [conversation, setConversation] = useState<any>([]);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedAssistant(null);
   };
-  
-  const handleAssistantClick = async (assistant: IAssistants) => {
+
+  const handleAssistantClick = async (assistant: any) => {
     try {
       console.log("assistans", assistant);
       setSelectedAssistant(assistant);
@@ -35,9 +34,10 @@ const Home: React.FC = () => {
     }
   };
 
-  const addAssistant = (newAssistant: IAssistants) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const addAssistant = (newAssistant: any) => {
     console.log("newAssistant: ", newAssistant);
-    setAssistants((prev) => [...prev, newAssistant]);
+    setAssistants((prev:any) => [...prev, newAssistant]);
   };
 
   return (
@@ -54,7 +54,7 @@ const Home: React.FC = () => {
 
         {/* Lista de asistentes */}
         <ul className="space-y-4">
-          {assistants.map((item, index) => (
+          {assistants.map((item:any , index:number) => (
             <li
               key={index}
               onClick={() => handleAssistantClick(item)}
