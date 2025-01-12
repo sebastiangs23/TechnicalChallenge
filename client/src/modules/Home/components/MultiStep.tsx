@@ -4,7 +4,7 @@ import axios from "axios";
 import Confetti from "react-confetti";
 import { toast, ToastContainer } from "react-toastify";
 
-const api = import.meta.env.VITE_API_LOCAL;
+// const api = import.meta.env.VITE_API_LOCAL;
 
 interface MultiStepFormProps {
   closeModal: () => void;
