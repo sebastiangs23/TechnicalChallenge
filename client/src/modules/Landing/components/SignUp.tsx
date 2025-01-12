@@ -3,8 +3,6 @@ const api = import.meta.env.VITE_API_LOCAL;
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../../../style/index.css";
-
-import Notification from "../../../global/Notification";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
