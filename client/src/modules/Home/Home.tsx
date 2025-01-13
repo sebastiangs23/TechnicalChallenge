@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import MultiStepForm from "./components/MultiStep";
 import ConversationModal from "./components/ConversationModal";
 import { ToastContainer } from "react-toastify";
-import img from "../../assets/imgs/aimia.webp";
+import img from "../../assets/imgs/aikamila.webp";
 import telegram from "../../assets/icons/TELGRAM.webp";
 import x from "../../assets/icons/X.webp";
 import MatrixBackground from "../Canva/MatrixBackgroud";
@@ -73,11 +73,11 @@ const Home: React.FC = () => {
           <p className="text-sm text-gray-400">
             Powered by{" "}
             <span className="text-cyan-300 font-semibold">
-              AIMIA23 & ChatGpt
+              AIKAMILA & ChatGpt
             </span>
           </p>
           <p className="text-xs text-gray-500 mt-2">
-            Your Trading AI Assistant
+            Your Trading AI Agent
           </p>
         </div>
       </div>
@@ -87,18 +87,18 @@ const Home: React.FC = () => {
         <div className="mb-8 text-center">
           {/* Título principal */}
           <h1 className="text-5xl font-extrabold text-cyan-500 tracking-wider uppercase">
-            AIMIA23
+            AIKAMILA
           </h1>
 
           {/* Subtítulo */}
           <h2 className="text-3xl font-extrabold tracking-wide uppercase mt-4 text-gray-300">
-            Contract: 6o8sMNv22uftHKc1TgkXJxFiMZ2KaGjoQwGCKJzypump
+            Contract: 
           </h2>
 
           <div className="flex justify-center items-center">
             <img src={pumpfun} alt="pumpfun" className="w-20 m-4" />
             <h2 className="text-3xl font-extrabold tracking-wide uppercase mt-4 text-gray-300">
-              Pumpfun: https://pump.fun/coin/6o8sMNv22uftHKc1TgkXJxFiMZ2KaGjoQwGCKJzypump
+              Pumpfun: 
             </h2>
           </div>
 
@@ -106,7 +106,7 @@ const Home: React.FC = () => {
           <div className="flex justify-center my-6">
             <img
               src={img}
-              alt="AIMIA23"
+              alt="AIKAMILA"
               className="w-64 rounded-lg shadow-lg"
             />
           </div>
@@ -147,10 +147,10 @@ const Home: React.FC = () => {
         {/* Roadmap Section */}
         <div className="mt-12">
           <div className="flex justify-center">
-            <a href="https://x.com/aimia_23" target="_blank">
+            <a href="https://x.com/ai_kamila_agent" target="_blank">
               <img src={x} alt="x" className="w-24" />
             </a>
-            <a href="https://t.me/aimia_23" target="_blank">
+            <a href="https://x.com/ai_kamila_agent" target="_blank">
               <img src={telegram} alt="telegram" className="w-24" />
             </a>
           </div>
@@ -198,7 +198,7 @@ const Home: React.FC = () => {
               <li>1 billion market cap</li>
               <li>
                 Connect to Binance, Gate.io, and Bitget APIs to enable futures
-                trading with AIMIA23
+                trading with AIKAMILA
               </li>
               <li>Ask Me Anything with the development team (AMA)</li>
             </ul>
@@ -207,7 +207,7 @@ const Home: React.FC = () => {
           <div className="text-lg mt-4">
             <h2 className="text-xl font-semibold">Q3</h2>
             <ul className="list-disc ml-6 space-y-2 mt-2">
-              <li>Present AIMIA23 to accelerators and incubators</li>
+              <li>Present AIKAMILA to accelerators and incubators</li>
               <li>5 billion market cap</li>
               <li>1 Billion Market Cap.</li>
             </ul>
@@ -238,12 +238,12 @@ const Home: React.FC = () => {
           </h1>
           <div className="text-lg mt-4">
             <p className="mb-4">
-              Through AIMIA23, users will be able to analyze market trends,
+              Through AIKAMILA, users will be able to analyze market trends,
               receive financial advice, and make informed investment decisions.
             </p>
             <ul className="list-disc ml-6 space-y-2">
               <li>
-                You will need to use AIMIA23 tokens to add new memecoins and
+                You will need to use AIKAMILA tokens to add new memecoins and
                 connect your wallet to start trading.
               </li>
               <li>1% fee per trade (applied only to profits).</li>
