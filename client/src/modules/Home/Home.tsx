@@ -150,7 +150,7 @@ const Home: React.FC = () => {
             <a href="https://x.com/ai_kamila_agent" target="_blank">
               <img src={x} alt="x" className="w-24" />
             </a>
-            <a href="https://x.com/ai_kamila_agent" target="_blank">
+            <a href="https://t.me/ai_agent_kamila" target="_blank">
               <img src={telegram} alt="telegram" className="w-24" />
             </a>
           </div>
