@@ -220,7 +220,7 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
         {step === 4 && (
           <div>
             <h3 className="text-2xl font-semibold mb-4">
-              Step 4: Let AIMIA23 analyze
+              Step 4: Let AIKamila analyze
             </h3>
             <button
               type="submit"
