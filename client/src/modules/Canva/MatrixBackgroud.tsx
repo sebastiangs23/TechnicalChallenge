@@ -14,43 +14,55 @@ const MatrixBackground: React.FC = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const columns = Math.floor(canvas.width / 20); // Número de columnas de caracteres
-    const drops: number[] = Array(columns).fill(0); // Cada columna tiene una "gota"
+    // Dibujar la bandera de los EE.UU.
+    const drawFlag = () => {
+      // Dibujar franjas rojas y blancas
+      const stripeHeight = canvas.height / 13; // 13 franjas en total
+      for (let i = 0; i < 13; i++) {
+        ctx.fillStyle = i % 2 === 0 ? "red" : "white";
+        ctx.fillRect(0, i * stripeHeight, canvas.width, stripeHeight);
+      }
 
-    const drawMatrix = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; // Fondo semitransparente para efecto de desvanecimiento
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Dibujar el cantón azul con estrellas
+      const cantonWidth = canvas.width * 0.4; // 40% del ancho del canvas
+      const cantonHeight = stripeHeight * 7; // 7 franjas de altura
+      ctx.fillStyle = "blue";
+      ctx.fillRect(0, 0, cantonWidth, cantonHeight);
 
-      ctx.fillStyle = "#0F0"; // Color verde brillante
-      ctx.font = "15px monospace";
+      // Dibujar estrellas en el cantón
+      const starSize = 10;
+      const starRows = 9; // 9 filas de estrellas
+      const starCols = 6; // 6 columnas de estrellas
+      const starOffsetX = cantonWidth / starCols; // Espaciado horizontal
+      const starOffsetY = cantonHeight / starRows; // Espaciado vertical
 
-      // Dibujar caracteres en cada columna
-      drops.forEach((y, index) => {
-        const text = String.fromCharCode(0x30a0 + Math.random() * 96); // Caracteres aleatorios
-        const x = index * 20; // Espaciado horizontal
-
-        ctx.fillText(text, x, y);
-
-        // Si la gota sale del canvas, reiníciala en la parte superior
-        if (y > canvas.height && Math.random() > 0.975) {
-          drops[index] = 0;
+      ctx.fillStyle = "white";
+      for (let row = 0; row < starRows; row++) {
+        for (let col = 0; col < starCols; col++) {
+          const x = col * starOffsetX + starOffsetX / 2;
+          const y = row * starOffsetY + starOffsetY / 2;
+          if ((row % 2 === 0 && col % 2 === 0) || (row % 2 === 1 && col % 2 === 1)) {
+            ctx.beginPath();
+            ctx.arc(x, y, starSize / 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
-
-        // Incrementa la posición Y de la gota
-        drops[index] += 20;
-      });
-
-      requestAnimationFrame(drawMatrix); // Repetir la animación
+      }
     };
 
-    drawMatrix();
+    const renderBackground = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas
+      drawFlag();
+     
+    };
+
+    renderBackground();
 
     // Ajustar tamaño del canvas si cambia el tamaño de la ventana
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      drops.length = Math.floor(canvas.width / 20);
-      drops.fill(0);
+      renderBackground();
     };
 
     window.addEventListener("resize", handleResize);
@@ -70,7 +82,7 @@ const MatrixBackground: React.FC = () => {
         width: "100%",
         height: "100%",
         zIndex: -1, // Asegura que el canvas esté detrás del contenido
-        background: "black", // Fondo negro puro
+        background: "black", // Fondo negro puro como base
       }}
     />
   );
