@@ -147,10 +147,10 @@ const Home: React.FC = () => {
         {/* Roadmap Section */}
         <div className="mt-12">
           <div className="flex justify-center">
-            <a href="https://x.com/ai_kamila_agent" target="_blank">
+            <a href="https://x.com/ai_trump_agent" target="_blank">
               <img src={x} alt="x" className="w-24" />
             </a>
-            <a href="https://t.me/ai_agent_kamila" target="_blank">
+            <a href="https://t.me/ai_trump_agent" target="_blank">
               <img src={telegram} alt="telegram" className="w-24" />
             </a>
           </div>
