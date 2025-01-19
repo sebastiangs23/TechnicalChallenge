@@ -63,20 +63,20 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
       }));
   
       // Realizar la solicitud al endpoint
-      const response = await axios.post(`https://sgsdeveloper.com/ai-mia/ask`, {
-        data: mia,
-      });
+      // const response = await axios.post(`https://sgsdeveloper.com/ai-mia/ask`, {
+      //   data: mia,
+      // });
   
-      console.log("responseeee--->", response.data);
+      // console.log("responseeee--->", response.data);
   
-      // Actualizar el estado "mia" con la respuesta del servidor
-      const updatedMia = {
-        ...mia,
-        message: response.data.system,
-      };
+      // // Actualizar el estado "mia" con la respuesta del servidor
+      // const updatedMia = {
+      //   ...mia,
+      //   message: response.data.system,
+      // };
   
-      setMia(updatedMia);
-      addAssistant(updatedMia);
+      // setMia(updatedMia);
+      // addAssistant(updatedMia);
   
       setShowConfetti(true);
   
